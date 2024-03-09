@@ -1,0 +1,6 @@
+{
+	"connectionString": "couchbases://cb.xyzzzzzzzzzzzz.cloud.couchbase.com",
+	"bucketName": "nostr",
+	"username": "DBaccess",
+	"password": "YourPasswordHere"
+}
