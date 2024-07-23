@@ -35,7 +35,7 @@ func main() {
 	defaultConnStr := flag.String("conn", "localhost", "Couchbase connection string")
 	defaultBucketName := flag.String("bucket", "all_nostr_events", "Bucket name")
 	defaultUsername := flag.String("user", "admin", "Username")
-	defaultPassword := flag.String("pass", "hangman8june4magician9traverse8disbar4majolica4bacilli", "Password")
+	defaultPassword := flag.String("pass", "ore8airman7goods6feudal8mantle", "Password")
 	defaultLogging := flag.Bool("v", false, "Verbose logging from 'gocb'")
 
 	flag.Parse()
