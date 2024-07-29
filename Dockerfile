@@ -33,4 +33,4 @@ COPY --from=builder /app/bin/nostouch /usr/local/bin/nostouch
 EXPOSE 7777
 
 # Command to run both `nak` and `nostouch`
-CMD ["sh", "-c", "printf '{\"since\":1716200000}' | nak req ws://127.0.0.1:7777 | nostouch"]
+CMD ["sh", "-c", "printf '{\"since\":1716200000}' | /usr/local/bin/nak req ws://127.0.0.1:7777 | /usr/local/bin/nostouch"]
