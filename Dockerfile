@@ -1,0 +1,33 @@
+# Use an official Golang runtime as a parent image
+FROM golang:1.22.5 as builder
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the `nak` and `nostouch` source files into the container
+COPY /Users/pac/repos/github.com/fiatjaf/nak ./nak
+COPY /Users/pac/repos/github.com/PaulCapestany/nostouch ./nostouch
+
+# Build the `nak` binary
+WORKDIR /app/nak
+RUN go mod tidy && go build -o /app/bin/nak .
+
+# Build the `nostouch` binary
+WORKDIR /app/nostouch
+RUN go mod tidy && go build -o /app/bin/nostouch .
+
+# Use a smaller base image for the final stage
+FROM alpine:latest
+
+# Install necessary certificates
+RUN apk --no-cache add ca-certificates
+
+# Copy the built binaries from the builder stage
+COPY --from=builder /app/bin/nak /usr/local/bin/nak
+COPY --from=builder /app/bin/nostouch /usr/local/bin/nostouch
+
+# Expose any necessary ports (if needed)
+EXPOSE 7777
+
+# Command to run both `nak` and `nostouch`
+CMD ["sh", "-c", "printf '{\"since\":1716200000}' | nak req ws://127.0.0.1:7777 | nostouch"]
