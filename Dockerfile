@@ -8,7 +8,7 @@ WORKDIR /app
 RUN git clone https://github.com/fiatjaf/nak.git
 
 # Copy the `nostouch` source files into the container
-COPY . .
+COPY . ./nostouch
 
 # Build the `nak` binary
 WORKDIR /app/nak
