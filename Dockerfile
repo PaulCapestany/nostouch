@@ -33,4 +33,4 @@ COPY --from=builder /app/bin/nostouch /usr/local/bin/nostouch
 EXPOSE 7777
 
 # Command to run both `nak` and `nostouch`
-CMD ["sh", "-c", "printf '{\"since\":1716200000}' | nak req strfry-project:7777 | nostouch"]
+CMD ["sh", "-c", "printf '{\"since\":1716200000}' | nak req ws://strfry.strfry-project.svc.cluster.local:7777 | nostouch -conn couchbase-cluster.default.svc.cluster.local"]
