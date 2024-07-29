@@ -19,10 +19,10 @@ WORKDIR /app/nostouch
 RUN go mod tidy && go build -o /app/bin/nostouch .
 
 # Use a smaller base image for the final stage
-FROM alpine:latest
+FROM debian:latest
 
 # Install necessary certificates
-RUN apk --no-cache add ca-certificates
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copy the built binaries from the builder stage
 COPY --from=builder /app/bin/nak /usr/local/bin/nak
@@ -33,4 +33,4 @@ COPY --from=builder /app/bin/nostouch /usr/local/bin/nostouch
 EXPOSE 7777
 
 # Command to run both `nak` and `nostouch`
-CMD ["sh", "-c", "printf '{\"since\":1716200000}' | /usr/local/bin/nak req ws://127.0.0.1:7777 | /usr/local/bin/nostouch"]
+CMD ["sh", "-c", "printf '{\"since\":1716200000}' | nak req ws://127.0.0.1:7777 | nostouch"]
