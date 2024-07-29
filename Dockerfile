@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy the `nak` and `nostouch` source files into the container
 COPY /Users/pac/repos/github.com/fiatjaf/nak ./nak
-COPY /Users/pac/repos/github.com/PaulCapestany/nostouch ./nostouch
+COPY /Users/pac/repos/github.com/paulcapestany/nostouch ./nostouch
 
 # Build the `nak` binary
 WORKDIR /app/nak
