@@ -4,9 +4,11 @@ FROM golang:1.22.5 as builder
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the `nak` and `nostouch` source files into the container
-COPY /Users/pac/repos/github.com/fiatjaf/nak ./nak
-COPY /Users/pac/repos/github.com/paulcapestany/nostouch ./nostouch
+# Clone the `nak` repository
+RUN git clone https://github.com/fiatjaf/nak.git
+
+# Copy the `nostouch` source files into the container
+COPY . .
 
 # Build the `nak` binary
 WORKDIR /app/nak
@@ -25,6 +27,7 @@ RUN apk --no-cache add ca-certificates
 # Copy the built binaries from the builder stage
 COPY --from=builder /app/bin/nak /usr/local/bin/nak
 COPY --from=builder /app/bin/nostouch /usr/local/bin/nostouch
+# COPY ./conf.json /app/conf.json
 
 # Expose any necessary ports (if needed)
 EXPOSE 7777
