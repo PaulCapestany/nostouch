@@ -27,7 +27,6 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 # Copy the built binaries from the builder stage
 COPY --from=builder /app/bin/nak /usr/local/bin/nak
 COPY --from=builder /app/bin/nostouch /usr/local/bin/nostouch
-# COPY ./conf.json /app/conf.json
 
 # Expose any necessary ports (if needed)
 EXPOSE 7777
