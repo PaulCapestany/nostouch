@@ -144,13 +144,13 @@ func processDocument(document map[string]interface{}, col *gocb.Collection) {
 		return
 	}
 
-	_, err := col.Insert(documentID, document, &gocb.InsertOptions{})
+	_, err := col.Upsert(documentID, document, &gocb.UpsertOptions{})
 	if err != nil {
-		log.Printf("Failed to insert document with ID %s: %v", documentID, err)
+		log.Printf("Failed to upsert document with ID %s: %v", documentID, err)
 		return
 	}
 
-	fmt.Printf("Document with ID %s inserted successfully\n", documentID)
+	fmt.Printf("Document with ID %s upserted successfully\n", documentID)
 }
 
 func unstringifyJSON(input interface{}) (interface{}, error) {
