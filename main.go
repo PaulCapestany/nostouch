@@ -2,13 +2,17 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/signal"
 	"strings"
+	"sync"
+	"syscall"
 	"time"
 
 	"github.com/couchbase/gocb/v2"
@@ -75,8 +79,30 @@ func main() {
 	}
 	col := bucket.DefaultCollection()
 
+	// Create a context that will be cancelled on interrupt signal
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Setup signal catching for graceful shutdown
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// Wait for shutdown signal in a separate goroutine
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		select {
+		case sig := <-sigChan:
+			log.Printf("Received signal: %s, shutting down gracefully...", sig)
+			cancel() // Cancel the context to signal shutdown
+		case <-ctx.Done():
+			// Context cancelled, no signal received
+		}
+	}()
+
 	if filenames == "" {
-		processFile(os.Stdin, col)
+		processFile(ctx, os.Stdin, col)
 	} else {
 		filesToProcess := strings.Split(filenames, " ")
 		for _, filename := range filesToProcess {
@@ -86,19 +112,29 @@ func main() {
 			}
 			defer file.Close()
 
-			processFile(file, col)
+			processFile(ctx, file, col)
 		}
 	}
+
+	// Wait for graceful shutdown completion
+	wg.Wait()
+	log.Println("Service shut down successfully.")
 }
 
-func processFile(file *os.File, col *gocb.Collection) {
+func processFile(ctx context.Context, file *os.File, col *gocb.Collection) {
 	scanner := bufio.NewScanner(file)
 	const maxBufferSize = 10 * 1024 * 1024      // Adjust the size as needed, e.g., 10MB
 	buffer := make([]byte, 4096, maxBufferSize) // Initial size of 4KB, max of 10MB
 	scanner.Buffer(buffer, maxBufferSize)
 
 	for scanner.Scan() {
-		processLine(scanner.Text(), col)
+		select {
+		case <-ctx.Done():
+			log.Println("Processing interrupted, shutting down...")
+			return
+		default:
+			processLine(scanner.Text(), col)
+		}
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatalf("Error reading from file: %v", err)
