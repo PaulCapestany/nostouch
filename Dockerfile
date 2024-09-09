@@ -1,5 +1,5 @@
 # Use an official Golang runtime as a parent image
-FROM golang:1.22.5 as builder
+FROM golang:1.23 as builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -32,4 +32,4 @@ COPY --from=builder /app/bin/nostouch /usr/local/bin/nostouch
 EXPOSE 7777
 
 # Command to run both `nak` and `nostouch`
-CMD ["sh", "-c", "printf '{\"since\":1716200000}' | nak req ws://strfry.strfry-project.svc.cluster.local:7777 | nostouch -conn couchbase-cluster.default.svc.cluster.local"]
+CMD ["sh", "-c", "printf '{\"since\":1725911165}' | nak req ws://strfry.strfry-project.svc.cluster.local:7777 | nostouch -conn couchbase-cluster.default.svc.cluster.local"]
