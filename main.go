@@ -174,6 +174,19 @@ func processLine(jsonInput string, col *gocb.Collection) {
 }
 
 func processDocument(document map[string]interface{}, col *gocb.Collection) {
+	// Get the current Unix timestamp
+	currentTimestamp := time.Now().Unix()
+
+	// Check if _seen_at_first is present in the document
+	if _, exists := document["_seen_at_first"]; !exists {
+		// Set _seen_at_first and _seen_at_last for newly created documents
+		document["_seen_at_first"] = currentTimestamp
+		document["_seen_at_last"] = currentTimestamp
+	} else {
+		// Update only _seen_at_last for existing documents
+		document["_seen_at_last"] = currentTimestamp
+	}
+
 	documentID, ok := document["id"].(string)
 	if !ok || documentID == "" {
 		log.Println("Document ID ('id' field) is missing or not a string")
