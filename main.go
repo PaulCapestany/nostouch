@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -178,10 +177,12 @@ func processDocument(document map[string]interface{}, col *gocb.Collection) {
 	currentTimestamp := time.Now().Unix()
 
 	// Check if _seen_at_first is present in the document
+	isInsert := false
 	if _, exists := document["_seen_at_first"]; !exists {
 		// Set _seen_at_first and _seen_at_last for newly created documents
 		document["_seen_at_first"] = currentTimestamp
 		document["_seen_at_last"] = currentTimestamp
+		isInsert = true
 	} else {
 		// Update only _seen_at_last for existing documents
 		document["_seen_at_last"] = currentTimestamp
@@ -199,7 +200,11 @@ func processDocument(document map[string]interface{}, col *gocb.Collection) {
 		return
 	}
 
-	fmt.Printf("Document with ID %s upserted successfully\n", documentID)
+	if isInsert {
+		log.Printf("Document with ID %s inserted successfully\n", documentID)
+	} else {
+		log.Printf("Document with ID %s upserted successfully\n", documentID)
+	}
 }
 
 func unstringifyJSON(input interface{}) (interface{}, error) {
