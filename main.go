@@ -5,8 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"strings"
@@ -31,16 +33,46 @@ func init() {
 	flag.StringVar(&filenames, "f", "", "Space-separated list of files to process")
 }
 
+// Global variable to track readiness state
+var isReady bool = false
+
+// Health check function for liveness probe
+func healthzHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "OK")
+}
+
+// Readiness check function for readiness probe
+func readyzHandler(w http.ResponseWriter, r *http.Request) {
+	if isReady {
+		fmt.Fprintf(w, "Ready")
+	} else {
+		http.Error(w, "Not Ready", http.StatusServiceUnavailable)
+	}
+}
+
+func startHealthServer() {
+	http.HandleFunc("/healthz", healthzHandler)
+	http.HandleFunc("/readyz", readyzHandler)
+
+	go func() {
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			log.Fatalf("Health check server failed: %v", err)
+		}
+	}()
+}
+
 func main() {
+	// Start the health and readiness server in the background
+	startHealthServer()
+
+	// Your existing code for nostouch continues here...
 	var configFile string
 	flag.StringVar(&configFile, "config", "", "Configuration file path")
-
 	defaultConnStr := flag.String("conn", "localhost", "Couchbase connection string")
 	defaultBucketName := flag.String("bucket", "all-nostr-events", "Bucket name")
 	defaultUsername := flag.String("user", "admin", "Username")
 	defaultPassword := flag.String("pass", "ore8airman7goods6feudal8mantle", "Password")
 	defaultLogging := flag.Bool("v", false, "Verbose logging from 'gocb'")
-
 	flag.Parse()
 
 	config := Config{
@@ -77,6 +109,9 @@ func main() {
 		log.Fatal(err)
 	}
 	col := bucket.DefaultCollection()
+
+	// Mark the application as ready after initialization completes
+	isReady = true
 
 	// Create a context that will be cancelled on interrupt signal
 	ctx, cancel := context.WithCancel(context.Background())
