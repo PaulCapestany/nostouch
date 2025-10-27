@@ -143,9 +143,12 @@ func main() {
 			if err != nil {
 				log.Fatalf("Cannot open file %s: %v", filename, err)
 			}
-			defer file.Close()
 
 			processFile(ctx, file, col)
+
+			if err := file.Close(); err != nil {
+				log.Printf("Error closing file %s: %v", filename, err)
+			}
 		}
 	}
 
