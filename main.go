@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -83,7 +82,7 @@ func main() {
 	}
 
 	if configFile != "" {
-		fileContent, err := ioutil.ReadFile(configFile)
+		fileContent, err := os.ReadFile(configFile)
 		if err != nil {
 			log.Fatalf("Error reading config file: %v", err)
 		}
