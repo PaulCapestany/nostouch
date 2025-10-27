@@ -142,7 +142,7 @@ func main() {
 	if filenames == "" {
 		processFile(ctx, os.Stdin, col)
 	} else {
-		filesToProcess := strings.Split(filenames, " ")
+		filesToProcess := strings.Fields(filenames)
 		for _, filename := range filesToProcess {
 			file, err := os.Open(filename)
 			if err != nil {
