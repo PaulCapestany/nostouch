@@ -1,0 +1,9 @@
+.git
+.vscode
+bin/
+build/
+tmp/
+*.log
+*.tmp
+*.local
+conf.json
