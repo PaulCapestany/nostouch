@@ -101,6 +101,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer func() {
+		if err := cluster.Close(nil); err != nil {
+			log.Printf("Error closing Couchbase cluster: %v", err)
+		}
+	}()
 
 	bucket := cluster.Bucket(config.BucketName)
 	err = bucket.WaitUntilReady(5*time.Second, nil)
