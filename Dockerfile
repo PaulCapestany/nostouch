@@ -1,5 +1,5 @@
 # Use an official Golang runtime as a parent image
-FROM golang:1.23 AS builder
+FROM golang:1.24.1 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -20,6 +20,7 @@ RUN go mod tidy && go build -o /app/bin/nostouch .
 
 # Use a smaller base image for the final stage
 FROM debian:latest
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary certificates
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
