@@ -16,7 +16,7 @@ The primary goals of the `nostouch` project are:
 ## Getting Started
 
 ### Prerequisites
-- [Go 1.22.5](https://golang.org/dl/)
+- [Go 1.24.1](https://golang.org/dl/)
 - [Couchbase Server 7.6.2](https://www.couchbase.com/downloads)
 - [gocb v2.8.1](https://github.com/couchbase/gocb)
 - [Nostr protocol specification](https://github.com/nostr-protocol/nips)
@@ -63,4 +63,3 @@ For any questions or suggestions, please contact [Paul](http://github.com/paulca
 
 
 ---
-
