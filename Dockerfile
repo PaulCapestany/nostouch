@@ -1,8 +1,11 @@
 # Use an official Golang runtime as a parent image
-FROM golang:1.24.1 AS builder
+FROM golang:1.24.6 AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
+
+# Ensure Go commands use the desired toolchain version
+ENV GOTOOLCHAIN=go1.24.6
 
 # Clone the `nak` repository
 RUN git clone https://github.com/fiatjaf/nak.git
