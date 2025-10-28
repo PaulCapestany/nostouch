@@ -1,9 +1,13 @@
 module github.com/PaulCapestany/nostouch
 
 go 1.24
+
 toolchain go1.24.6
 
-require github.com/couchbase/gocb/v2 v2.9.1
+require (
+	github.com/couchbase/gocb/v2 v2.9.1
+	github.com/paulcapestany/nostr_shared v0.1.2
+)
 
 require (
 	github.com/couchbase/gocbcore/v10 v10.5.1 // indirect

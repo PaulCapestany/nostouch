@@ -26,6 +26,11 @@ The primary goals of the `nostouch` project are:
 CREATE INDEX `kind_and_event_lookup` ON `default`:`all-nostr-events`.`_default`.`_default`(`kind`,(distinct (array (`t`[1]) for `t` in `tags` when ((`t`[0]) = "e") end))) PARTITION BY HASH(META().id) WITH {"num_replica": 1}
 ```
 
+### Configuration
+- `nostouch` shares its Couchbase configuration helpers with [`nostr_shared`](https://github.com/PaulCapestany/nostr_shared). Set `COUCHBASE_USER` and `COUCHBASE_PASSWORD` before starting the service; optional overrides include `COUCHBASE_CONNSTR`, `COUCHBASE_BUCKET`, and `ENV_PREFIX`.
+- CLI flags (`-conn`, `-user`, `-pass`, `-bucket`) and the existing JSON config file continue to work and will update the shared configuration when provided.
+- When no overrides are supplied the service falls back to the historic defaults (`admin` / `ore8airman7goods6feudal8mantle` against `localhost` and the `all-nostr-events` bucket).
+
 ### Installation
 1. Clone the repository:
     ```shell
