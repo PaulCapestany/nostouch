@@ -262,6 +262,11 @@ func processFile(ctx context.Context, file *os.File, col *gocb.Collection) {
 }
 
 func processLine(jsonInput string, col *gocb.Collection) {
+	jsonInput = strings.TrimSpace(jsonInput)
+	if jsonInput == "" {
+		return
+	}
+
 	var document interface{}
 	err := json.Unmarshal([]byte(jsonInput), &document)
 	if err != nil {
